@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import pl.edu.agh.mwo.invoice.product.Product;
 
@@ -21,7 +22,12 @@ public class Invoice {
 
     public String getInvoiceNumber() {
         return invoiceNumber;
+    };
+
+    public Set<Map.Entry<Product, Integer>> getProductsEntrySet() {
+        return products.entrySet();
     }
+
     public void addProduct(Product product) {
         addProduct(product, 1);
     }
