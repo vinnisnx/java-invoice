@@ -1,6 +1,7 @@
 package pl.edu.agh.mwo.invoice;
 
 import java.math.BigDecimal;
+import java.util.regex.Pattern;
 
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -19,6 +20,41 @@ public class InvoiceTest {
     @Before
     public void createEmptyInvoiceForTheTest() {
         invoice = new Invoice();
+    }
+
+    @Test
+    public void testInvoiceNumberIsStandardLength() {
+        Assert.assertEquals(22, invoice.getInvoiceNumber().length());
+    }
+
+    @Test
+    public void testInvoiceNameRandomPartIsBetweenRange() {
+        String number = invoice.getInvoiceNumber().substring(18);
+        int num = Integer.parseInt(number);
+        Assert.assertTrue(num >= 1000 && num <= 9999);
+    }
+
+    @Test
+    public void testInvoiceBeginIsAlwaysSame() {
+        Assert.assertEquals("INV", invoice.getInvoiceNumber().substring(0, 3));
+    }
+
+    @Test
+    public void testInvoiceDataFormatIsAlwaysCorrect() {
+        int year = Integer.parseInt(invoice.getInvoiceNumber().substring(3, 5));
+        int month = Integer.parseInt(invoice.getInvoiceNumber().substring(5, 7));
+        int day = Integer.parseInt(invoice.getInvoiceNumber().substring(7, 9));
+        int hour = Integer.parseInt(invoice.getInvoiceNumber().substring(9, 11));
+        int minute = Integer.parseInt(invoice.getInvoiceNumber().substring(11, 13));
+        int second = Integer.parseInt(invoice.getInvoiceNumber().substring(13, 15));
+        int millisecond = Integer.parseInt(invoice.getInvoiceNumber().substring(15, 18));
+        Assert.assertTrue(year >= 0 && year <= 99);
+        Assert.assertTrue(month >= 0 && month <= 12);
+        Assert.assertTrue(day >= 0 && day <= 31);
+        Assert.assertTrue(hour >= 0 && hour <= 23);
+        Assert.assertTrue(minute >= 0 && minute <= 59);
+        Assert.assertTrue(second >= 0 && second <= 59);
+        Assert.assertTrue(millisecond >= 0 && millisecond <= 999);
     }
 
     @Test

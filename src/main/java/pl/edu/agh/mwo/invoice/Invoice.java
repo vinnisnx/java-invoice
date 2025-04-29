@@ -1,16 +1,27 @@
 package pl.edu.agh.mwo.invoice;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import pl.edu.agh.mwo.invoice.product.Product;
 
 public class Invoice {
     private Map<Product, Integer> products = new HashMap<Product, Integer>();
-    private int invoiceNumber;
+    private final String invoiceNumber;
 
+    public Invoice() {
+        Random rand = new Random();
+        this.invoiceNumber = "INV" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmssSSS"))
+                + (rand.nextInt(9000)+1000);
+    }
 
+    public String getInvoiceNumber() {
+        return invoiceNumber;
+    }
     public void addProduct(Product product) {
         addProduct(product, 1);
     }
