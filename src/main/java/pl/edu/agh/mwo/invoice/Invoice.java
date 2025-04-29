@@ -28,6 +28,8 @@ public class Invoice {
         return products.entrySet();
     }
 
+    public Map<Product, Integer> getProducts() { return products; }
+
     public void addProduct(Product product) {
         addProduct(product, 1);
     }
@@ -36,7 +38,7 @@ public class Invoice {
         if (product == null || quantity <= 0) {
             throw new IllegalArgumentException();
         }
-        products.put(product, quantity);
+        products.compute(product, (k, v) -> v == null ? quantity : v + quantity);
     }
 
     public BigDecimal getNetTotal() {

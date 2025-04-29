@@ -162,6 +162,25 @@ public class InvoiceTest {
         invoice.addProduct(null);
     }
 
-//    @Test
-//    public void test
+    @Test
+    public void testAddingSameProductSingleQuantity() {
+        Product testProduct = new TaxFreeProduct("Owoce", new BigDecimal("10"));
+        invoice.addProduct(testProduct);
+        invoice.addProduct(testProduct);
+
+        Assert.assertEquals(2, (long)invoice.getProducts().get(testProduct));
+    }
+
+    @Test
+    public void testAddingSameProductsMultipleQuantity() {
+        Product testProduct1 = new TaxFreeProduct("Owoce", new BigDecimal("10"));
+        Product testProduct2 = new DairyProduct("Milk", new BigDecimal("15"));
+        invoice.addProduct(testProduct1, 10);
+        invoice.addProduct(testProduct1, 5);
+        invoice.addProduct(testProduct2, 13);
+        invoice.addProduct(testProduct2, 7);
+
+        Assert.assertEquals(15, (long)invoice.getProducts().get(testProduct1));
+        Assert.assertEquals(20, (long)invoice.getProducts().get(testProduct2));
+    }
 }
