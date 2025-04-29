@@ -9,10 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import pl.edu.agh.mwo.invoice.Invoice;
-import pl.edu.agh.mwo.invoice.product.DairyProduct;
-import pl.edu.agh.mwo.invoice.product.OtherProduct;
-import pl.edu.agh.mwo.invoice.product.Product;
-import pl.edu.agh.mwo.invoice.product.TaxFreeProduct;
+import pl.edu.agh.mwo.invoice.product.*;
 
 public class InvoiceTest {
     private Invoice invoice;
@@ -100,7 +97,9 @@ public class InvoiceTest {
         invoice.addProduct(new TaxFreeProduct("Owoce", new BigDecimal("200")));
         invoice.addProduct(new DairyProduct("Maslanka", new BigDecimal("100")));
         invoice.addProduct(new OtherProduct("Wino", new BigDecimal("10")));
-        Assert.assertThat(new BigDecimal("310"), Matchers.comparesEqualTo(invoice.getNetTotal()));
+        // net price: 15.56
+        invoice.addProduct(new FuelCanister("Fuel", new BigDecimal("10")));
+        Assert.assertThat(new BigDecimal("325.56"), Matchers.comparesEqualTo(invoice.getNetTotal()));
     }
 
     @Test
@@ -111,40 +110,49 @@ public class InvoiceTest {
         invoice.addProduct(new DairyProduct("Kefir", new BigDecimal("100")));
         // tax: 2.30
         invoice.addProduct(new OtherProduct("Piwko", new BigDecimal("10")));
-        Assert.assertThat(new BigDecimal("10.30"), Matchers.comparesEqualTo(invoice.getTaxTotal()));
+        // tax: 3.5788 = 3.58
+        invoice.addProduct(new FuelCanister("Fuel", new BigDecimal("10")));
+        Assert.assertThat(new BigDecimal("13.88"), Matchers.comparesEqualTo(invoice.getTaxTotal()));
     }
 
     @Test
     public void testInvoiceHasProperTotalValueForManyProduct() {
-        // price with tax: 200
-        invoice.addProduct(new TaxFreeProduct("Maskotki", new BigDecimal("200")));
-        // price with tax: 108
-        invoice.addProduct(new DairyProduct("Maslo", new BigDecimal("100")));
-        // price with tax: 12.30
-        invoice.addProduct(new OtherProduct("Chipsy", new BigDecimal("10")));
-        Assert.assertThat(new BigDecimal("320.30"), Matchers.comparesEqualTo(invoice.getGrossTotal()));
+        // price with tax: 200.03
+        invoice.addProduct(new TaxFreeProduct("Maskotki", new BigDecimal("200.03")));
+        // price with tax: 107.9892 = 107.99
+        invoice.addProduct(new DairyProduct("Maslo", new BigDecimal("99.99")));
+        // price with tax: 12.2877 = 12.29
+        invoice.addProduct(new OtherProduct("Chipsy", new BigDecimal("9.99")));
+        // price with tax 21.5988 = 21.60
+        invoice.addProduct(new FuelCanister("Fuel", new BigDecimal("12")));
+
+        Assert.assertThat(new BigDecimal("341.91"), Matchers.comparesEqualTo(invoice.getGrossTotal()));
     }
 
     @Test
-    public void testInvoiceHasPropoerSubtotalWithQuantityMoreThanOne() {
+    public void testInvoiceHasProperSubtotalWithQuantityMoreThanOne() {
         // 2x kubek - price: 10
         invoice.addProduct(new TaxFreeProduct("Kubek", new BigDecimal("5")), 2);
         // 3x kozi serek - price: 30
         invoice.addProduct(new DairyProduct("Kozi Serek", new BigDecimal("10")), 3);
         // 1000x pinezka - price: 10
         invoice.addProduct(new OtherProduct("Pinezka", new BigDecimal("0.01")), 1000);
-        Assert.assertThat(new BigDecimal("50"), Matchers.comparesEqualTo(invoice.getNetTotal()));
+        // 30x wine - price: 196.8
+        invoice.addProduct(new BottleOfWine("Bottle of Wine", new BigDecimal("1")), 30);
+        Assert.assertThat(new BigDecimal("246.8"), Matchers.comparesEqualTo(invoice.getNetTotal()));
     }
 
     @Test
-    public void testInvoiceHasPropoerTotalWithQuantityMoreThanOne() {
+    public void testInvoiceHasProperTotalWithQuantityMoreThanOne() {
         // 2x chleb - price with tax: 10
         invoice.addProduct(new TaxFreeProduct("Chleb", new BigDecimal("5")), 2);
-        // 3x chedar - price with tax: 32.40
-        invoice.addProduct(new DairyProduct("Chedar", new BigDecimal("10")), 3);
-        // 1000x pinezka - price with tax: 12.30
-        invoice.addProduct(new OtherProduct("Pinezka", new BigDecimal("0.01")), 1000);
-        Assert.assertThat(new BigDecimal("54.70"), Matchers.comparesEqualTo(invoice.getGrossTotal()));
+        // 3x chedar - price with tax: 32.4324 = 32.43
+        invoice.addProduct(new DairyProduct("Chedar", new BigDecimal("10.01")), 3);
+        // 1000x pinezka - price with tax: 12.2877 = 12.29
+        invoice.addProduct(new OtherProduct("Pinezka", new BigDecimal("0.01")), 999);
+        // 12x wine - price with tax: 303.318 = 303.32
+        invoice.addProduct(new BottleOfWine("Wine", new BigDecimal("14.99")), 12);
+        Assert.assertThat(new BigDecimal("358.04"), Matchers.comparesEqualTo(invoice.getGrossTotal()));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -182,5 +190,33 @@ public class InvoiceTest {
 
         Assert.assertEquals(15, (long)invoice.getProducts().get(testProduct1));
         Assert.assertEquals(20, (long)invoice.getProducts().get(testProduct2));
+    }
+
+    @Test
+    public void testProductsWithExciseFixedTaxValue() {
+        Product wine = new BottleOfWine("Wine", new BigDecimal("10"));
+        Product gas = new FuelCanister("Gasoline", new BigDecimal("15"));
+
+        Assert.assertThat(new BigDecimal("5.56"), Matchers.comparesEqualTo(wine.getExcise()));
+        Assert.assertThat(new BigDecimal("5.56"), Matchers.comparesEqualTo(gas.getExcise()));
+    }
+
+    @Test
+    public void testProductWithExciseHasProperNetValue() {
+        Product wine = new BottleOfWine("Wine", new BigDecimal("10"));
+        Assert.assertThat(new BigDecimal("15.56"), Matchers.comparesEqualTo(wine.getPrice()));
+    }
+
+    @Test
+    public void testProductWithExciseCanCalculatePureNetValue() {
+        Product wine = new BottleOfWine("Wine", new BigDecimal("10"));
+        Assert.assertThat(new BigDecimal("10"),
+                Matchers.comparesEqualTo(wine.getPrice().subtract(wine.getExcise())));
+    }
+
+    @Test
+    public void testProductsWithExciseTotalPrice() {
+        Product wine = new BottleOfWine("Wine", new BigDecimal("10"));
+        Assert.assertThat(new BigDecimal("19.1388"), Matchers.comparesEqualTo(wine.getPriceWithTax()));
     }
 }

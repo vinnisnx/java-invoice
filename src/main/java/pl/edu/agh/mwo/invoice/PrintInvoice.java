@@ -27,8 +27,9 @@ public class PrintInvoice implements Printer {
             String name = entry.getKey().getName();
             totalQuantity += entry.getValue();
             String quantity = String.valueOf(entry.getValue());
-            BigDecimal numPrice = new BigDecimal(entry.getKey().getPrice().toString());
-            String price = numPrice.multiply(BigDecimal.valueOf(entry.getValue())).toString();
+            BigDecimal numPrice = new BigDecimal(entry.getKey().getPriceWithTax().toString());
+            String price = numPrice.multiply(BigDecimal.valueOf(entry.getValue()))
+                    .setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 
             if (name.length() > maxNameSize) name = name.substring(0, maxNameSize);
             int distanceNameQuantity = Math.max(1, maxDistanceNameQuantity - name.length() - quantity.length());

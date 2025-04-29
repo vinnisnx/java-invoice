@@ -45,7 +45,8 @@ public class Invoice {
         BigDecimal totalNet = BigDecimal.ZERO;
         for (Product product : products.keySet()) {
             BigDecimal quantity = new BigDecimal(products.get(product));
-            totalNet = totalNet.add(product.getPrice().multiply(quantity));
+            totalNet = totalNet.add(product.getPrice().multiply(quantity)
+                    .setScale(2, BigDecimal.ROUND_HALF_UP));
         }
         return totalNet;
     }
@@ -58,7 +59,8 @@ public class Invoice {
         BigDecimal totalGross = BigDecimal.ZERO;
         for (Product product : products.keySet()) {
             BigDecimal quantity = new BigDecimal(products.get(product));
-            totalGross = totalGross.add(product.getPriceWithTax().multiply(quantity));
+            totalGross = totalGross.add(product.getPriceWithTax().multiply(quantity)
+                    .setScale(2, BigDecimal.ROUND_HALF_UP));
         }
         return totalGross;
     }
