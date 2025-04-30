@@ -26,7 +26,7 @@ public class Invoice {
 
     public String getInvoiceNumber() {
         return invoiceNumber;
-    };
+    }
 
     public Set<Map.Entry<Product, Integer>> getProductsEntrySet() {
         return products.entrySet();

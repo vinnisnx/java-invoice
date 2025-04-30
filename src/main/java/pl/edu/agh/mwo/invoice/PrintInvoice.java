@@ -36,7 +36,9 @@ public class PrintInvoice implements Printer {
             String price = numPrice.multiply(BigDecimal.valueOf(entry.getValue()))
                     .setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 
-            if (name.length() > MAX_NAME_SIZE) { name = name.substring(0, MAX_NAME_SIZE); }
+            if (name.length() > MAX_NAME_SIZE) {
+                name = name.substring(0, MAX_NAME_SIZE);
+            }
             int distanceNameQuantity =
                     Math.max(1, MAX_DISTANCE_NAME_QUANTITY - name.length() - quantity.length());
             int distanceQuantityPrice = Math.max(1, MAX_DISTANCE_QUANTITY_PRICE - price.length());
@@ -47,16 +49,16 @@ public class PrintInvoice implements Printer {
 
         String finalPrice = invoice.getGrossTotal().toString();
 
-        sb.append("\n").append("Total product types: ").
-                append(" ".repeat(Math.max(1, MAX_DISTANCE_INVOICE_TOTAL_TYPES -
-                        String.valueOf(entrySet.size()).length())))
+        sb.append("\n").append("Total product types: ")
+                .append(" ".repeat(Math.max(1, MAX_DISTANCE_INVOICE_TOTAL_TYPES
+                        - String.valueOf(entrySet.size()).length())))
                 .append(entrySet.size()).append("\n");
         sb.append("Total quantity: ")
-                .append(" ".repeat(Math.max(1, MAX_DISTANCE_INVOICE_TOTAL_QUANTITY -
-                        String.valueOf(totalQuantity).length())))
+                .append(" ".repeat(Math.max(1, MAX_DISTANCE_INVOICE_TOTAL_QUANTITY
+                        - String.valueOf(totalQuantity).length())))
                 .append(totalQuantity).append("\n");
-        sb.append("Total price: ").append(" ".repeat(Math.max(1, MAX_DISTANCE_INVOICE_TOTAL_PRICE -
-                        finalPrice.length()))).append(finalPrice).append("\n");
+        sb.append("Total price: ").append(" ".repeat(Math.max(1, MAX_DISTANCE_INVOICE_TOTAL_PRICE
+                - finalPrice.length()))).append(finalPrice).append("\n");
 
         System.out.println(sb);
     }

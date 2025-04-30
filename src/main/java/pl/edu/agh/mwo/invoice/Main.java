@@ -1,6 +1,10 @@
 package pl.edu.agh.mwo.invoice;
 
-import pl.edu.agh.mwo.invoice.product.*;
+import pl.edu.agh.mwo.invoice.product.TaxFreeProduct;
+import pl.edu.agh.mwo.invoice.product.Product;
+import pl.edu.agh.mwo.invoice.product.DairyProduct;
+import pl.edu.agh.mwo.invoice.product.OtherProduct;
+import pl.edu.agh.mwo.invoice.product.BottleOfWine;
 
 import java.math.BigDecimal;
 
@@ -12,17 +16,17 @@ public class Main {
 
     public static void main(String[] args) {
         Invoice invoice = new Invoice();
-        invoice.addProduct(new TaxFreeProduct("Baton", new BigDecimal("1.04"))
-                , TEST_VALUE_3);
+        invoice.addProduct(new TaxFreeProduct("Baton", new BigDecimal("1.04")),
+                TEST_VALUE_3);
         Product water = new TaxFreeProduct("Woda", new BigDecimal("1.99"));
         invoice.addProduct(water);
         invoice.addProduct(water);
-        invoice.addProduct(new DairyProduct("Chleb", new BigDecimal("3.54"))
-                , TEST_VALUE_2);
-        invoice.addProduct(new OtherProduct("Kamen", new BigDecimal("3.50"))
-                , TEST_VALUE_5);
-        invoice.addProduct(new BottleOfWine("Wine", new BigDecimal("4.99"))
-                , TEST_VALUE_4);
+        invoice.addProduct(new DairyProduct("Chleb", new BigDecimal("3.54")),
+                TEST_VALUE_2);
+        invoice.addProduct(new OtherProduct("Kamen", new BigDecimal("3.50")),
+                TEST_VALUE_5);
+        invoice.addProduct(new BottleOfWine("Wine", new BigDecimal("4.99")),
+                TEST_VALUE_4);
 
         Printer printer = new PrintInvoice(invoice);
         printer.print();
