@@ -23,6 +23,10 @@ but without javadoc requirements and with severity set to error.
         <property name="max" value="100"/>
     </module>
 
+    <module name="SuppressionFilter">
+        <property name="file" value="checkstyle-suppressions.xml"/>
+    </module>
+
     <module name="TreeWalker">
         <module name="MagicNumber"/>
         <module name="OuterTypeFilename"/>

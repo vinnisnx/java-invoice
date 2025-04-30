@@ -11,13 +11,17 @@ import java.util.Set;
 import pl.edu.agh.mwo.invoice.product.Product;
 
 public class Invoice {
+    private static final int INVOICE_RANDOM_NUMBER_MAX = 9000;
+    private static final int INVOICE_RANDOM_NUMBER_MIN = 1000;
+
     private Map<Product, Integer> products = new HashMap<Product, Integer>();
     private final String invoiceNumber;
 
     public Invoice() {
         Random rand = new Random();
-        this.invoiceNumber = "INV" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmssSSS"))
-                + (rand.nextInt(9000)+1000);
+        this.invoiceNumber = "INV" + LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("yyMMddHHmmssSSS"))
+                + (rand.nextInt(INVOICE_RANDOM_NUMBER_MAX) + INVOICE_RANDOM_NUMBER_MIN);
     }
 
     public String getInvoiceNumber() {
@@ -28,7 +32,9 @@ public class Invoice {
         return products.entrySet();
     }
 
-    public Map<Product, Integer> getProducts() { return products; }
+    public Map<Product, Integer> getProducts() {
+        return products;
+    }
 
     public void addProduct(Product product) {
         addProduct(product, 1);
